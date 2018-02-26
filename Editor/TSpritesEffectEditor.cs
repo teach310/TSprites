@@ -19,5 +19,10 @@ public class TSpritesEffectEditor : ShaderGUI {
 			var gradToggle = ShaderGUI.FindProperty ("_UseGradation", properties);
 			TShaderGUIUtils.DrawProperties (gradToggle, "_Gradation", materialEditor, properties, "Gradation");
 		}
+
+		using (new EditorGUILayout.VerticalScope (GUI.skin.box)) {
+			var polarCoordToggle = ShaderGUI.FindProperty ("_UsePolarCoord", properties);
+			materialEditor.ShaderProperty (polarCoordToggle, "PolarCoord");
+		}
 	}
 }

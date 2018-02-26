@@ -29,6 +29,10 @@ Shader "TSprites/Effect"
          [Toggle(USE_GRADATION)] _UseGradation ("Use Mask", Float) = 0
          // Clampにすること
         _GradationTex("Gradation Texture", 2D) = "white"{}
+
+
+        // Polar Coord
+        [Toggle(USE_POLAR_COORD)] _UsePolarCoord ("Use Polar Coord", Float) = 0
     }
 
     SubShader
@@ -59,9 +63,10 @@ Shader "TSprites/Effect"
             #pragma multi_compile _ USE_SUB_TEXTURE
             #pragma multi_compile _ USE_MASK
             #pragma multi_compile _ USE_GRADATION
+            #pragma multi_compile _ USE_POLAR_COORD
             #pragma multi_compile _SUBTEXBLEND_ADD _SUBTEXBLEND_MIX
             #include "UnitySprites.cginc"
-
+            #include "TSpritesCG.cginc"
             sampler2D _SubTex;
             float _SubTexBlendIntensity;
             uniform float _SubTexScrollU; uniform float _SubTexScrollV;
@@ -102,9 +107,13 @@ Shader "TSprites/Effect"
             }
 
             fixed4 frag(v2f_ts IN) : SV_Target{
-            	
+            	float2 mainUV = IN.uv0;
+            	#if USE_POLAR_COORD
+            	mainUV = ConvertToPolarCoord(IN.uv0);
+            	#endif
+
             	// Default
-                fixed4 mainColor = SampleSpriteTexture(IN.uv0);
+                fixed4 mainColor = SampleSpriteTexture(mainUV);
 
                 // Mask
                 // 基本はrでマスクをかける
